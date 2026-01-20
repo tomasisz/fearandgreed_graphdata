@@ -48,4 +48,4 @@ This project uses a static JSON file for historical data to ensure fast loading 
    git commit -m "chore: daily data update"
    git push
    ```
-   _The GitHub Actions workflow will automatically deploy the updated site._
+   _The GitHub Actions workflow (deploy.yml) will automatically deploy the updated site._
