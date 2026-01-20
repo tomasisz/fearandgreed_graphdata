@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { format, subDays, parseISO } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import localHistoryData from '../data/fear_and_greed_historical.json';
 
 export interface SubIndicatorDataPoint {
@@ -74,14 +74,6 @@ const mapSubIndicatorHistory = (sub?: SubIndicator): ChartDataPoint[] => {
         time: format(new Date(item.x), 'yyyy-MM-dd'),
         value: item.y
     })).sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
-};
-
-const mapLocalSubHistory = (subData: any): ChartDataPoint[] => {
-    if (!subData || !subData.data) return [];
-    return subData.data.map((item: any) => ({
-        time: format(new Date(item.x), 'yyyy-MM-dd'),
-        value: item.y
-    })).sort((a: ChartDataPoint, b: ChartDataPoint) => new Date(a.time).getTime() - new Date(b.time).getTime());
 };
 
 export const fetchData = async (): Promise<{ 

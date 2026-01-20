@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { createChart, ColorType, CrosshairMode, LineSeries, type IChartApi, type Time } from 'lightweight-charts';
+import React, { useEffect, useRef } from 'react';
+import { createChart, ColorType, CrosshairMode, LineSeries, type Time } from 'lightweight-charts';
 import { useTheme } from '../../contexts/ThemeContext';
 import type { ChartDataPoint } from '../../services/api';
 
@@ -19,7 +19,6 @@ export const GenericChart: React.FC<GenericChartProps> = ({
 }) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
-  const [chart, setChart] = useState<IChartApi | null>(null);
 
   // Re-create chart when theme changes or init
   useEffect(() => {
@@ -74,8 +73,6 @@ export const GenericChart: React.FC<GenericChartProps> = ({
 
     series.setData(chartData);
     chartInstance.timeScale().fitContent();
-
-    setChart(chartInstance);
 
     const handleResize = () => {
       if (chartContainerRef.current) {
