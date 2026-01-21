@@ -1,0 +1,163 @@
+:root {
+  font-family: 'Share Tech Mono', 'Courier New', monospace; /* Tech feel font */
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  
+  /* Sci-Fi / Cyberpunk Palette */
+  --bg-color: #050a14;
+  --bg-grid: #0a1120;
+  --text-main: #a0c0ff;
+  --text-sub: #5070a0;
+  
+  --primary: #00f0ff; /* Neon Cyan */
+  --secondary: #001020; /* Deep Blue header */
+  --accent: #ff0055; /* Neon Pink/Red */
+  --error: #ff3333;
+  --success: #00ff88;
+
+  --glass-bg: rgba(5, 20, 40, 0.7);
+  --glass-border: rgba(0, 240, 255, 0.3);
+  --glass-shadow: 0 0 20px rgba(0, 240, 255, 0.1), inset 0 0 20px rgba(0, 240, 255, 0.05);
+
+  --font-tech: 'Share Tech Mono', monospace;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Background Grid Effect REMOVED for Matrix Rain */
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center;    /* Center vertically */
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  /* background-image: removed */
+  /* background-size: removed */
+  font-family: var(--font-tech);
+  overflow-x: hidden;
+}
+
+/* Scanline Effect */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#root {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100vh; 
+}
+
+/* Glitch Heading effect (Optional sophisticated styling) */
+h1 {
+  font-size: 3.5rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  text-shadow: 2px 2px 0px var(--accent), -2px -2px 0px var(--primary);
+  margin-bottom: 0.5em;
+  color: #fff;
+}
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: 4px; /* More angular for tech feel */
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Tech corners decoration */
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 10px; height: 10px;
+  border-top: 2px solid var(--primary);
+  border-left: 2px solid var(--primary);
+}
+.glass-panel::after {
+  content: '';
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 10px; height: 10px;
+  border-bottom: 2px solid var(--primary);
+  border-right: 2px solid var(--primary);
+}
+
+button {
+  border-radius: 2px;
+  border: 1px solid var(--primary);
+  padding: 0.8em 1.5em;
+  font-size: 1.1em;
+  font-family: var(--font-tech);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background-color: rgba(0, 240, 255, 0.1);
+  color: var(--primary);
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+}
+
+button:hover {
+  background-color: var(--primary);
+  color: var(--bg-color);
+  box-shadow: 0 0 20px var(--primary);
+  text-shadow: none;
+}
+
+button:focus,
+button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bg-color), 0 0 0 4px var(--primary);
+}
+
+.text-highlight {
+  color: var(--primary);
+  text-shadow: 0 0 5px var(--primary);
+}
+.text-error {
+  color: var(--error);
+  text-shadow: 0 0 5px var(--error);
+  text-decoration: underline;
+}
+.text-correct {
+  color: var(--text-main);
+  opacity: 0.5;
+}
+.text-pending {
+  color: var(--text-sub);
+}
+
+/* Animations */
+@keyframes pulse {
+  0% { opacity: 0.2; }
+  50% { opacity: 1; }
+  100% { opacity: 0.2; }
+}
