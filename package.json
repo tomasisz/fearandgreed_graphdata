@@ -11,6 +11,7 @@
     "update-data": "node scripts/update_data.cjs"
   },
   "dependencies": {
+    "@google-cloud/bigquery": "^8.1.1",
     "axios": "^1.13.2",
     "date-fns": "^4.1.0",
     "lightweight-charts": "^5.1.0",

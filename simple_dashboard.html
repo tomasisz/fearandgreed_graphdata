@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fear & Greed Index Live Data</title>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        margin-top: 0;
+        color: #333;
+      }
+      .status-box {
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 6px;
+        display: none;
+      }
+      .success {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #c8e6c9;
+      }
+      .error {
+        background-color: #ffebee;
+        color: #c62828;
+        border: 1px solid #ffcdd2;
+        display: block;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+      }
+      th {
+        background-color: #fafafa;
+        font-weight: 600;
+        color: #555;
+      }
+      tr:hover {
+        background-color: #f9f9f9;
+      }
+
+      .score-extreme-fear {
+        color: #d32f2f;
+        font-weight: bold;
+      }
+      .score-fear {
+        color: #e64a19;
+        font-weight: bold;
+      }
+      .score-neutral {
+        color: #fbc02d;
+        font-weight: bold;
+      }
+      .score-greed {
+        color: #388e3c;
+        font-weight: bold;
+      }
+      .score-extreme-greed {
+        color: #1b5e20;
+        font-weight: bold;
+      }
+
+      button {
+        padding: 10px 20px;
+        background-color: #2196f3;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      button:disabled {
+        background-color: #ccc;
+      }
+      button:hover:not(:disabled) {
+        background-color: #1976d2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        "
+      >
+        <h1>Fear & Greed Live Data</h1>
+        <button id="refreshBtn" onclick="fetchData()">Refresh</button>
+      </div>
+
+      <div id="statusBox" class="status-box"></div>
+
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <th>Time (UTC)</th>
+            <th>Score</th>
+            <th>Rating</th>
+            <th>Fetched At</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr>
+            <td colspan="4" style="text-align: center; color: #888">
+              No data loaded. Click Refresh.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      // REPLACE WITH YOUR GAS WEB APP URL
+      const API_URL =
+        "https://script.google.com/macros/s/AKfycbxQNg9J6H3N-Giv_38u5iKMGC5-XrxkdIHFP9V_hXgNoHHN03TYuLXQ_kB_CbEahKyh1A/exec";
+
+      async function fetchData() {
+        const btn = document.getElementById("refreshBtn");
+        const statusBox = document.getElementById("statusBox");
+        const tbody = document.getElementById("tableBody");
+
+        btn.disabled = true;
+        btn.textContent = "Loading...";
+        statusBox.style.display = "none";
+        statusBox.className = "status-box";
+
+        try {
+          // GAS Web App redirects, so fetch follows automatically usually
+          // Adding timestamp to avoid caching
+          const response = await fetch(`${API_URL}?t=${Date.now()}`);
+
+          if (!response.ok) {
+            throw new Error(`HTTP Error: ${response.status}`);
+          }
+
+          const json = await response.json();
+
+          // Check for nested structure
+          if (json.fear_and_greed_historical && Array.isArray(json.fear_and_greed_historical.data)) {
+             renderTable(json.fear_and_greed_historical.data);
+             showStatus(
+                `Successfully fetched ${json.fear_and_greed_historical.data.length} rows.`,
+                "success",
+             );
+          } else {
+             throw new Error("Invalid Data Structure or No Data");
+          }
+        } catch (err) {
+          console.error(err);
+          showStatus(
+            `Error: ${err.message}. <br>Make sure the Web App is deployed as 'Anyone'.`,
+            "error",
+          );
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">Load Failed</td></tr>`;
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Refresh";
+        }
+      }
+
+      function renderTable(data) {
+        const tbody = document.getElementById("tableBody");
+        if (!data || data.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="4" style="text-align:center;">No data found.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data
+          .map((row) => {
+            const date = new Date(row.x).toLocaleString();
+            const fetched = row.fetched_at
+              ? new Date(row.fetched_at).toLocaleString()
+              : "-";
+            const scoreClass = getScoreClass(row.y);
+
+            return `
+                    <tr>
+                        <td>${date}</td>
+                        <td class="${scoreClass}">${row.y.toFixed(0)}</td>
+                        <td>${row.rating}</td>
+                        <td style="font-size:0.85em; color:#666;">${fetched}</td>
+                    </tr>
+                `;
+          })
+          .join("");
+      }
+
+      function getScoreClass(score) {
+        if (score <= 25) return "score-extreme-fear";
+        if (score <= 45) return "score-fear";
+        if (score <= 55) return "score-neutral";
+        if (score <= 75) return "score-greed";
+        return "score-extreme-greed";
+      }
+
+      function showStatus(msg, type) {
+        const box = document.getElementById("statusBox");
+        box.innerHTML = msg;
+        box.className = `status-box ${type}`;
+        box.style.display = "block";
+      }
+
+      // Auto fetch on load
+      fetchData();
+    </script>
+  </body>
+</html>

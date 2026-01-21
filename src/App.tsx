@@ -6,6 +6,7 @@ import { IndexChart } from './components/Chart/IndexChart';
 import { CurrentState } from './components/Dashboard/CurrentState';
 import { ThemeToggle } from './components/Controls/ThemeToggle';
 import { LanguageSelector } from './components/Controls/LanguageSelector';
+import { LiveBigQueryView } from './components/Dashboard/LiveBigQueryView';
 import { IndicatorCard } from './components/IndicatorCard/IndicatorCard';
 import { useTheme } from './contexts/ThemeContext';
 import './index.css';
@@ -146,6 +147,8 @@ const MainLayout: React.FC = () => {
                 history={subIndicatorsHistory} 
             />
         )}
+        
+        <LiveBigQueryView />
       </main>
     </div>
   );
